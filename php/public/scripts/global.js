@@ -121,8 +121,12 @@ class NavbarManager {
     // Disable logout buttonl
     this.signOutButton.disabled = true;
 
-    // Send
-    xhr.send();
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+    const formData = new FormData();
+    formData.append("csrf_token", csrfToken);
+
+    xhr.send(formData);
   }
 
   onOpenSidebar() {
