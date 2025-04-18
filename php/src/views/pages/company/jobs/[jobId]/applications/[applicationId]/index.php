@@ -14,7 +14,7 @@ use src\dao\LocationType;
         <header class="card__header">
             <!-- Back button -->
             <a href="/company/jobs/<?= htmlspecialchars($application->getJob()->getJobId(), ENT_QUOTES, 'utf-8'); ?>/applications" class="header__back">
-                <svg class="back__icon" xmlns="hsttp://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-left">
+                <svg class="back__icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-left">
                     <path d="m12 19-7-7 7-7" />
                     <path d="M19 12H5" />
                 </svg>
@@ -107,17 +107,81 @@ use src\dao\LocationType;
                 Curriculum vitae (CV)
             </h2>
 
-            <iframe
-                class="cv"
-                title="Curriculum Vitae"
-                src='<?= htmlspecialchars($application->getCvPath(), ENT_QUOTES, 'utf-8'); ?>'
-                width='100%'
-                height='600px'>
+            <!-- PDF.js viewer -->
+            <div id="pdf-container" class="cv" style="width: 100%; height: 600px; border: 1px solid #ccc;">
+                <div id="pdf-viewer" style="width: 100%; height: 100%; overflow: auto;"></div>
+            </div>
+            
+            <!-- Fallback download link -->
+            <div class="mt-2">
+                <a href="<?= htmlspecialchars($application->getCvPath(), ENT_QUOTES, 'utf-8'); ?>" target="_blank" class="button button--small button--outline">
+                    Download CV
+                </a>
+            </div>
 
-                <p>Your browser doesn't support iframes.
-                    <a href='<?= htmlspecialchars($application->getCvPath(), ENT_QUOTES, 'utf-8'); ?>' target='_blank'>Click here to see the PDF file.</a>
-                </p>
-            </iframe>
+            <!-- PDF.js scripts -->
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.6.347/pdf_viewer.min.css">
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.6.347/pdf.min.js"></script>
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    // Set workerSrc property to pdf.worker.min.js
+                    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.6.347/pdf.worker.min.js';
+
+                    // PDF file path
+                    const pdfPath = '<?= htmlspecialchars($application->getCvPath(), ENT_QUOTES, 'utf-8'); ?>';
+                    
+                    // Load the PDF file
+                    const loadingTask = pdfjsLib.getDocument(pdfPath);
+                    
+                    loadingTask.promise.then(function(pdf) {
+                        // PDF loaded, now render the first page
+                        const container = document.getElementById('pdf-viewer');
+                        
+                        // Clear the container
+                        container.innerHTML = '';
+                        
+                        // Total pages in the PDF
+                        const numPages = pdf.numPages;
+                        
+                        // Render each page
+                        for (let pageNum = 1; pageNum <= numPages; pageNum++) {
+                            // Create a div for each page
+                            const pageContainer = document.createElement('div');
+                            pageContainer.className = 'pdf-page-container';
+                            pageContainer.style.margin = '10px 0';
+                            container.appendChild(pageContainer);
+                            
+                            // Render the page
+                            pdf.getPage(pageNum).then(function(page) {
+                                const viewport = page.getViewport({ scale: 1.5 });
+                                
+                                // Create a canvas for this page
+                                const canvas = document.createElement('canvas');
+                                const context = canvas.getContext('2d');
+                                canvas.height = viewport.height;
+                                canvas.width = viewport.width;
+                                
+                                pageContainer.appendChild(canvas);
+                                
+                                // Render PDF page into canvas context
+                                const renderContext = {
+                                    canvasContext: context,
+                                    viewport: viewport
+                                };
+                                
+                                page.render(renderContext);
+                            });
+                        }
+                    }).catch(function(error) {
+                        // PDF loading error
+                        console.error('Error loading PDF:', error);
+                        document.getElementById('pdf-viewer').innerHTML = 
+                            '<div class="error-message" style="padding: 20px; color: red;">' +
+                            'Error loading PDF. Please try downloading it instead.' +
+                            '</div>';
+                    });
+                });
+            </script>
         </section>
 
 
