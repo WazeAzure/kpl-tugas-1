@@ -34,7 +34,6 @@ def do_signup(option: int):
     res = requests.post(HOST + url, data=body)
     print(res.status_code, res.text)
 
-    
 def do_signin():
     global PHPSESSID, headers
     url = "auth/sign-in"
@@ -57,6 +56,7 @@ def do_jobsearch():
     url = "jobs"
     payload = encoded_custom("-- '")
     print(payload)
+
     params = {
       "search": "",
       "sort-created-at": "newest-first",

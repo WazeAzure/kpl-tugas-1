@@ -18,6 +18,7 @@
 
         <!-- Form -->
         <form id="create-job-form" class="form" action="/company/jobs/create" method="POST" enctype="multipart/form-data">
+            <input type="hidden" name="csrf_token" value="<?= \src\utils\UserSession::generateCsrfToken() ?>">
             <!-- Position -->
             <div class="form__group">
                 <label for="position" class="form__label 

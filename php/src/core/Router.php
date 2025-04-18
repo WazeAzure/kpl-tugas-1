@@ -42,6 +42,13 @@ class Router
      */
     public function post(string $path, callable $handlerFactory, array $middlewaresFactory = [])
     {
+        $exclude = ['/auth/sign-in', '/auth/sign-up/job-seeker', '/auth/sign-up/company'];
+
+        if (!in_array($path, $exclude)) 
+        {
+            $middlewaresFactory[] = fn () => new \src\middlewares\VerifyCsrfMiddleware();
+        }
+
         $this->addRoute('POST', $path, $handlerFactory, $middlewaresFactory);
     }
 
@@ -50,6 +57,13 @@ class Router
      */
     public function put(string $path, callable $handlerFactory, array $middlewaresFactory = [])
     {
+        $exclude = ['/auth/sign-in', '/auth/sign-up/job-seeker', '/auth/sign-up/company'];
+
+        if (!in_array($path, $exclude)) 
+        {
+            $middlewaresFactory[] = fn () => new \src\middlewares\VerifyCsrfMiddleware();
+        }
+
         $this->addRoute('PUT', $path, $handlerFactory, $middlewaresFactory);
     }
 
@@ -58,6 +72,13 @@ class Router
      */
     public function delete(string $path, callable $handlerFactory, array $middlewaresFactory = [])
     {
+        $exclude = ['/auth/sign-in', '/auth/sign-up/job-seeker', '/auth/sign-up/company'];
+
+        if (!in_array($path, $exclude)) 
+        {
+            $middlewaresFactory[] = fn () => new \src\middlewares\VerifyCsrfMiddleware();
+        }
+        
         $this->addRoute('DELETE', $path, $handlerFactory, $middlewaresFactory);
     }
 

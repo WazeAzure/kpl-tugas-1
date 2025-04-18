@@ -253,8 +253,9 @@ class Response
         $contentPath = __DIR__ . '/../views/error/index.php';
 
         // Set HTTP status code immediately
-        // http_response_code($statusCode);
-
+        if (is_int($statusCode)) {
+            http_response_code($statusCode);
+        }
 
         // Check if the content file exists
         if (!file_exists($contentPath)) {
