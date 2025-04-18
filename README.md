@@ -53,31 +53,7 @@ LinkinPurry is a sophisticated job market platform designed to connect talented 
 
 2. Create a `.env` file and copy `.env.example` to it.
 
-3. Create docker network
-
-   ```bash
-   make network
-   ```
-
-   or
-
-   ```bash
-   docker network create linkinpurry-network
-   ```
-
-4. Run the database (with seeding). To turn off seeding, comment the SQL script from line 159 untill the end.
-
-   ```bash
-   make db
-   ```
-
-   or
-
-   ```bash
-   docker compose up --build linkinpurry-db
-   ```
-
-5. Run the website
+3. Run the website
 
    - For development,
 
@@ -88,7 +64,7 @@ LinkinPurry is a sophisticated job market platform designed to connect talented 
      or
 
      ```bash
-     docker compose up --build linkinpurry-web-dev
+     docker compose -f docker-compose.yml -f docker-compose.dev.yml up --build
      ```
 
    - For production
@@ -100,10 +76,10 @@ LinkinPurry is a sophisticated job market platform designed to connect talented 
      or
 
      ```bash
-     docker compose up --build linkinpurry-web-prod
+     docker compose -f docker-compose.yml -f docker-compose.prod.yml up --build
      ```
 
-6. Stop the container
+4. Stop the container
 
    ```bash
    make stop
@@ -115,7 +91,7 @@ LinkinPurry is a sophisticated job market platform designed to connect talented 
    docker compose down
    ```
 
-7. Hard reset (delete docker volume for database & image storage)
+5. Hard reset (delete docker volume for database & image storage)
 
    ```bash
    make reset

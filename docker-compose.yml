@@ -1,7 +1,6 @@
 version: "3.8"
 
 services:
-  # Database
   linkinpurry-db:
     container_name: linkinpurry-db
     image: postgres:17
@@ -19,39 +18,6 @@ services:
           "CMD-SHELL",
           "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB} -h ${POSTGRES_HOST} -p ${POSTGRES_PORT}",
         ]
-
-  # Development (with Xdebug & Volume binding for refreshing)
-  linkinpurry-web-dev:
-    container_name: linkinpurry-web-dev
-    build:
-      context: .
-      target: development
-    env_file: .env
-    volumes:
-      - ./:/var/www/html/ # Live reload if source code changes (bind mount)
-      - upload-data:/var/www/html/php/public/uploads # Uploads data persistence (named volume)
-    ports:
-      - "8080:80"
-    depends_on:
-      - linkinpurry-db
-    networks:
-      - linkinpurry-network
-
-  # Production (without Xdebug & no Volume binding)
-  linkinpurry-web-prod:
-    container_name: linkinpurry-web-prod
-    build:
-      context: .
-      target: production
-    env_file: .env
-    ports:
-      - "8080:80"
-    volumes:
-      - upload-data:/var/www/html/php/public/uploads
-    depends_on:
-      - linkinpurry-db
-    networks:
-      - linkinpurry-network
 
 volumes:
   db-data:
