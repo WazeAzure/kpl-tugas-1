@@ -105,6 +105,7 @@ use src\dao\LocationType;
             action="/jobs/<?= htmlspecialchars($jobId, ENT_QUOTES, 'UTF-8') ?>/apply"
             method="POST"
             enctype="multipart/form-data">
+            <input type="hidden" name="csrf_token" value="<?= \src\utils\UserSession::generateCsrfToken() ?>">
             <!-- Title -->
             <h1 class="card__title">
                 Apply For This Job

@@ -18,6 +18,7 @@
 
         <!-- Form -->
         <form class="form" action="/company/profile" method="POST">
+            <input type="hidden" name="csrf_token" value="<?= \src\utils\UserSession::generateCsrfToken() ?>">
             <!-- Name -->
             <div class="form__group">
                 <label for="name" class="form__label 
