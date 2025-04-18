@@ -1,0 +1,17 @@
+version: "3.8"
+
+services:
+  linkinpurry-web:
+    container_name: linkinpurry-web-prod
+    build:
+      context: .
+      target: production
+    env_file: .env
+    volumes:
+      - upload-data:/var/www/html/php/public/uploads
+    ports:
+      - "8080:80"
+    depends_on:
+      - linkinpurry-db
+    networks:
+      - linkinpurry-network
