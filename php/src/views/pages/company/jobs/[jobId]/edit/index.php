@@ -24,6 +24,7 @@
             method="POST"
             enctype="multipart/form-data">
             <!-- Position -->
+            <input type="hidden" name="csrf_token" value="<?= \src\utils\UserSession::generateCsrfToken() ?>">
             <div class="form__group">
                 <label for="position" class="form__label 
                     <?php if (isset($errorFields) && isset($errorFields['position'])):  ?>

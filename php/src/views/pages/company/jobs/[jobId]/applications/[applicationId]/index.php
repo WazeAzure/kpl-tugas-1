@@ -148,6 +148,7 @@ use src\dao\LocationType;
                 </h2>
 
                 <form class="application-verdict__form" id="application-detail-form" action="/company/jobs/<?= htmlspecialchars($application->getJob()->getJobId(), ENT_QUOTES, 'utf-8'); ?>/applications/<?= htmlspecialchars($application->getApplicationId(), ENT_QUOTES, 'utf-8'); ?>" method="POST">
+                    <input type="hidden" name="csrf_token" value="<?= \src\utils\UserSession::generateCsrfToken() ?>">
                     <!-- Radio fields -->
                     <div class="form__group">
                         <label class="form__label
