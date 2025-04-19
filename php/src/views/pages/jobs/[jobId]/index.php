@@ -155,14 +155,15 @@ use src\utils\UserSession;
 
                     <div class="attachments">
                         <!-- <?= $application->getCvPath() ?> -->
-                        <a target="_blank" href="<?= htmlspecialchars($application->getCvPath(), ENT_QUOTES, 'utf-8') ?>">
+                        <!-- <a target="_blank" href="<?= htmlspecialchars($application->getCvPath(), ENT_QUOTES, 'utf-8') ?>"> -->
+                        <a target="_blank" href="/cv-viewer.php?cvUrl=<?= urlencode($application->getCvPath()) ?>">
                             <button class="button button--default-color button--sm rounded-full attachment__button">
                                 CV
                             </button>
                         </a>
 
                         <?php if ($application->getVideoPath() != null): ?>
-                            <a target="_blank" href="<?= htmlspecialchars($application->getVideoPath(), ENT_QUOTES, 'utf-8') ?>">
+                            <a target="_blank" href="<?= htmlspecialchars("/cv-viewer" + $application->getVideoPath(), ENT_QUOTES, 'utf-8') ?>">
                                 <button class="button button--secondary button--sm rounded-full attachment__button">
                                     Video
                                 </button>

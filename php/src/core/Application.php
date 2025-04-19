@@ -109,6 +109,20 @@ class Application
             },
             [$anyAuthMiddlewareFactoryFunction]
         );
+
+        // Validate who can access CV attachment
+        $router->get(
+            '/cv-viewer/uploads/applications/jobs/[jobId]/users/[userId]/[type]/[fileName]',
+            function () {
+                $controller = $this->container->get(JobController::class);
+                $method = 'handleAccessApplicationAttachment';
+                return [
+                    'controller' => $controller,
+                    'method' => $method
+                ];
+            },
+            [$anyAuthMiddlewareFactoryFunction]
+        );
     }
 
     /**

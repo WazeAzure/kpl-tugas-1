@@ -102,8 +102,13 @@ class Validator
                         if ($value['error'] == UPLOAD_ERR_NO_FILE) {
                             continue 2;
                         }
-                        // allowed types
-                        if (!in_array($value['type'], $param['allowedTypes'])) {
+
+                        // check mimetype
+                        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+                        $mimeType = finfo_file($finfo, $value['tmp_name']);
+                        finfo_close($finfo);
+
+                        if (!in_array($mimeType, $param['allowedTypes'])) {
                             $message = ucfirst("$fieldInMessage must be one of " . implode(', ', $param['allowedTypes']));
                             $this->addError($field, $message);
                         }
@@ -118,13 +123,18 @@ class Validator
                         if ($value['error'][0] == UPLOAD_ERR_NO_FILE) {
                             continue 2;
                         }
-                        // allowed types
-                        foreach ($value['type'] as $key => $type) {
-                            if (!in_array($type, $param['allowedTypes'])) {
+
+                        // check mimetype
+                        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+                        foreach ($value['tmp_name'] as $key => $tmpName) {
+                            $mimeType = finfo_file($finfo, $tmpName);
+                            if (!in_array($mimeType, $param['allowedTypes'])) {
                                 $message = ucfirst("$fieldInMessage must be one of " . implode(', ', $param['allowedTypes']));
                                 $this->addError($field, $message);
                             }
                         }
+                        finfo_close($finfo);
+
                         // max size
                         foreach ($value['size'] as $key => $size) {
                             if ($size > $param['maxSize']) {
