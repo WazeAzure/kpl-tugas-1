@@ -15,7 +15,7 @@ use src\utils\UserSession;
         <header class="card__header">
             <!-- Back button -->
             <a href="/jobs" class="header__back">
-                <svg class="back__icon" xmlns="hsttp://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-left">
+                <svg class="back__icon" xmlns="https://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-left">
                     <path d="m12 19-7-7 7-7" />
                     <path d="M19 12H5" />
                 </svg>
@@ -155,15 +155,15 @@ use src\utils\UserSession;
 
                     <div class="attachments">
                         <!-- <?= $application->getCvPath() ?> -->
-                        <!-- <a target="_blank" href="<?= htmlspecialchars($application->getCvPath(), ENT_QUOTES, 'utf-8') ?>"> -->
-                        <a target="_blank" href="/cv-viewer.php?cvUrl=<?= urlencode($application->getCvPath()) ?>">
+                        <a target="_blank" href="<?= htmlspecialchars($application->getCvPath(), ENT_QUOTES, 'utf-8') ?>">
+                        <!-- <a target="_blank" href="<?= urlencode($application->getCvPath()) ?>"> -->
                             <button class="button button--default-color button--sm rounded-full attachment__button">
                                 CV
                             </button>
                         </a>
 
                         <?php if ($application->getVideoPath() != null): ?>
-                            <a target="_blank" href="<?= htmlspecialchars("/cv-viewer" + $application->getVideoPath(), ENT_QUOTES, 'utf-8') ?>">
+                            <a target="_blank" href="<?= htmlspecialchars($application->getVideoPath(), ENT_QUOTES, 'utf-8') ?>">
                                 <button class="button button--secondary button--sm rounded-full attachment__button">
                                     Video
                                 </button>

